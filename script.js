@@ -1,11 +1,12 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// Dibujar ejes cartesianos y grilla
 dibujarEjes();
 dibujarGrilla();
 
-// Función para dibujar ejes cartesianos
+/**
+ * Dibuja los ejes cartesianos en el lienzo.
+ */
 function dibujarEjes() {
   ctx.beginPath();
   ctx.moveTo(canvas.width / 2, 0); //donde empieza eje y
@@ -16,7 +17,9 @@ function dibujarEjes() {
   ctx.stroke();
 }
 
-// Función para dibujar la grilla
+/**
+ * Dibuja la grilla en el lienzo.
+ */
 function dibujarGrilla() {
   for (let i = -20; i <= 20; i += 1) {
     ctx.beginPath();
@@ -42,7 +45,11 @@ function dibujarGrilla() {
   ctx.fillText("0", canvas.width / 2 - 8, canvas.height / 2 + 12);
 }
 
-// Función para sustituir patrones de la función
+/**
+ * Sustituye los patrones de la función.
+ * @param {string} funcion - La función a la que se le reemplazarán los patrones.
+ * @returns {string} - La función con los patrones reemplazados.
+ */
 function sustituirPatrones(funcion) {
   funcion = funcion.replace(/(\d.?\d+)x/g, "$1*x");
   funcion = funcion.toString().replace(/(\d*\.?\d*)x\^2/g, "$1*(x^2)");
@@ -50,7 +57,13 @@ function sustituirPatrones(funcion) {
   return funcion;
 }
 
-// Función para evaluar la función
+/**
+ * Evalúa la función en un valor dado.
+ * @param {number} x - El valor de entrada para evaluar la función.
+ * @param {string} tipo - El tipo de función a evaluar.
+ * @param {string} funcion - La función a evaluar.
+ * @returns {number} - El resultado de evaluar la función en el valor dado.
+ */
 function evaluarFuncion(x, tipo, funcion) {
   funcion = sustituirPatrones(funcion);
 
@@ -101,8 +114,9 @@ function evaluarFuncion(x, tipo, funcion) {
       return resultado;
   }
 }
-
-
+/**
+ * Dibuja la gráfica de la función en el lienzo.
+ */
 function dibujarGrafica() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -130,7 +144,7 @@ function dibujarGrafica() {
 
     xAnterior = x;
     yAnterior = y;
-    x += 0.01;
+    x += 0.05;
 
     if (x <= 10) {
       requestAnimationFrame(animarLinea);
@@ -139,5 +153,5 @@ function dibujarGrafica() {
 
   requestAnimationFrame(animarLinea);
 }
-
+// Escucha el evento de clic en el botón "Graficar" y llama a la función dibujarGrafica.
 document.getElementById("graficar").addEventListener("click", dibujarGrafica);

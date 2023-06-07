@@ -118,17 +118,26 @@ function dibujarGrafica() {
   ctx.lineWidth = 2;
   let xAnterior = -10;
   let yAnterior = evaluarFuncion(xAnterior, tipoInput, funcionInput);
-  for (let x = -9.9; x <= 10; x += 0.01) {
+  let x = -9.9;
+
+  function animarLinea() {
     // Evaluar la función con math.js
     const y = evaluarFuncion(x, tipoInput, funcionInput);
 
     ctx.moveTo(xAnterior * 100 + 400, -yAnterior * 100 + 400);
     ctx.lineTo(x * 100 + 400, -y * 100 + 400);
     ctx.stroke();
+
     xAnterior = x;
     yAnterior = y;
+    x += 0.01;
+
+    if (x <= 10) {
+      requestAnimationFrame(animarLinea);
+    }
   }
-  ctx.stroke();
+
+  requestAnimationFrame(animarLinea);
 }
 
 document.getElementById("graficar").addEventListener("click", dibujarGrafica);

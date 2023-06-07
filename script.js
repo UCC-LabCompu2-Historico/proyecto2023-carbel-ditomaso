@@ -138,15 +138,15 @@ function dibujarGrafica() {
     // Evaluar la función con math.js
     const y = evaluarFuncion(x, tipoInput, funcionInput);
 
-    ctx.moveTo(xAnterior * 100 + 400, -yAnterior * 100 + 400);
-    ctx.lineTo(x * 100 + 400, -y * 100 + 400);
+    ctx.moveTo(xAnterior*30 + 400, -yAnterior*30 + 400);
+    ctx.lineTo(x*30 + 400, -y*30 + 400);
     ctx.stroke();
 
     xAnterior = x;
     yAnterior = y;
     x += 0.05;
 
-    if (x <= 10) {
+    if (x <= 100) {
       requestAnimationFrame(animarLinea);
     }
   }

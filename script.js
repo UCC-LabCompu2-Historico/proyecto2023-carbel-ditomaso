@@ -1,157 +1,154 @@
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+document.addEventListener("DOMContentLoaded", function () {
+  var inputFuncion = document.getElementById("funcion");
+  var btnGraficar = document.getElementById("graficar");
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
 
-dibujarEjes();
-dibujarGrilla();
+  function limpiarYDibujarEjeCartesiano() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-/**
- * Dibuja los ejes cartesianos en el lienzo.
- */
-function dibujarEjes() {
-  ctx.beginPath();
-  ctx.moveTo(canvas.width / 2, 0); //donde empieza eje y
-  ctx.lineTo(canvas.width / 2, canvas.height); //donde termina eje y
-  ctx.moveTo(0, canvas.height / 2);
-  ctx.lineTo(canvas.width, canvas.height / 2);
-  ctx.strokeStyle = "black";
-  ctx.stroke();
-}
+    // Ajustar tamaño de la grilla y ejes
+    var gridSize = canvas.width/ 20;  // Ajusta según sea necesario
+    var halfGridSize = gridSize / 2;
+    var axisWidth = 2;
 
-/**
- * Dibuja la grilla en el lienzo.
- */
-function dibujarGrilla() {
-  for (let i = -20; i <= 20; i += 1) {
+    // Calcular el inicio de la grilla y del eje X e Y
+    var startGridX = canvas.width / 2 % gridSize;
+    var startGridY = canvas.height / 2 % gridSize;
+
+    // Dibujar la grilla
     ctx.beginPath();
-    ctx.moveTo(i * 30 + canvas.width / 2, 0);
-    ctx.lineTo(i * 30 + canvas.width / 2, canvas.height);
-    ctx.strokeStyle = "#ccc";
+    ctx.strokeStyle = "#ddd"; // Color de la grilla
+
+    // Dibujar líneas horizontales
+    for (var i = startGridY; i < canvas.height; i += gridSize) {
+      ctx.moveTo(0, i);
+      ctx.lineTo(canvas.width, i);
+    }
+
+    for (var i = startGridY - gridSize; i > 0; i -= gridSize) {
+      ctx.moveTo(0, i);
+      ctx.lineTo(canvas.width, i);
+    }
+
+    // Dibujar líneas verticales
+    for (var j = startGridX; j < canvas.width; j += gridSize) {
+      ctx.moveTo(j, 0);
+      ctx.lineTo(j, canvas.height);
+    }
+
+    for (var j = startGridX - gridSize; j > 0; j -= gridSize) {
+      ctx.moveTo(j, 0);
+      ctx.lineTo(j, canvas.height);
+    }
+
     ctx.stroke();
+
+    // Dibujar ejes cartesianos
+    ctx.beginPath();
+    ctx.strokeStyle = "#000"; // Color de los ejes
+    ctx.lineWidth = axisWidth;
+
+    // Eje X
+    ctx.moveTo(0, canvas.height / 2);
+    ctx.lineTo(canvas.width, canvas.height / 2);
+
+    // Eje Y
+    ctx.moveTo(canvas.width / 2, 0);
+    ctx.lineTo(canvas.width / 2, canvas.height);
+
+    ctx.stroke();
+
+// Añadir números al eje X positivo
+    for (var x = startGridX + gridSize; x < canvas.width; x += gridSize) {
+      ctx.fillText(((x - canvas.width / 2) / gridSize).toFixed(1), x, canvas.height / 2 + 10, x + halfGridSize);
+    }
+
+// Añadir números al eje X negativo
+    for (var x = canvas.width / 2 - gridSize - startGridX; x > 0; x -= gridSize) {
+      ctx.fillText(((x - canvas.width / 2) / gridSize).toFixed(1), x, canvas.height / 2 + 10, x + halfGridSize);
+    }
+
+// Añadir números al eje Y positivo
+    for (var y = startGridY + gridSize; y < canvas.height; y += gridSize) {
+      ctx.fillText(((canvas.height / 2 - y) / gridSize).toFixed(1), canvas.width / 2, y + 0.5 * halfGridSize);
+    }
+
+// Añadir números al eje Y negativo
+    for (var y = canvas.height / 2 - gridSize - startGridY; y > 0; y -= gridSize) {
+      ctx.fillText(((canvas.height / 2 - y) / gridSize).toFixed(1), canvas.width / 2, y + 0.5 * halfGridSize);
+    }
+
+
+  }
+
+  function detectarTipoFuncion(expresion) {
+    try {
+      // ... (código existente)
+    } catch (error) {
+      console.error("Error al analizar la función:", error);
+      return "Función no válida: " + error.message;
+    }
+
+  }
+  function graficarFuncion(expresion) {
+    limpiarYDibujarEjeCartesiano();
+
+    var gridSize = 40;
+    var halfGridSize = gridSize / 2;
+
+    var rangoX = 10; // Modificar según sea necesario
+    var rangoY = 10;
 
     ctx.beginPath();
-    ctx.moveTo(0, i * 30 + canvas.height / 2);
-    ctx.lineTo(canvas.width, i * 30 + canvas.height / 2);
-    ctx.strokeStyle = "#ccc";
-    ctx.stroke();
+    ctx.strokeStyle = "#007bff";
 
-    if (i !== 0) {
-      // dibuja la escala tanto de y como de x, pero no el 0
-      ctx.fillStyle = "black";
-      ctx.fillText(i, i * 30 + canvas.width / 2 - 4, canvas.height / 2 + 12);
-      ctx.fillText(-i, canvas.width / 2 + 4, i * 30 + canvas.height / 2 + 6);
-    }
-  }
-  ctx.fillStyle = "red";
-  ctx.fillText("0", canvas.width / 2 - 8, canvas.height / 2 + 12);
-}
+    for (var pantallaX = 0; pantallaX < canvas.width; pantallaX++) {
+      var x = rangoX * ((pantallaX / canvas.width) - 0.5) * 2;
+      try {
+        var y = math.evaluate(expresion, { x: x });
 
-/**
- * Sustituye los patrones de la función.
- * @param {string} funcion - La función a la que se le reemplazarán los patrones.
- * @returns {string} - La función con los patrones reemplazados.
- */
-function sustituirPatrones(funcion) {
-  funcion = funcion.replace(/(\d.?\d+)x/g, "$1*x");
-  funcion = funcion.toString().replace(/(\d*\.?\d*)x\^2/g, "$1*(x^2)");
-  funcion = funcion.toString().replace(/(\d*\.?\d+)x/g, "$1*x");
-  return funcion;
-}
+        if (isNaN(y) || !isFinite(y)) {
+          continue; // Omitir puntos no válidos
+        }
 
-/**
- * Evalúa la función en un valor dado.
- * @param {number} x - El valor de entrada para evaluar la función.
- * @param {string} tipo - El tipo de función a evaluar.
- * @param {string} funcion - La función a evaluar.
- * @returns {number} - El resultado de evaluar la función en el valor dado.
- */
-function evaluarFuncion(x, tipo, funcion) {
-  funcion = sustituirPatrones(funcion);
+        var pantallaY = canvas.height / 2 - (y / rangoY) * (canvas.height / 2);
 
-  console.log(funcion);
-  console.log(x);
-  let resultado = 0;
-  switch (tipo) {
-    case "sin":
-      resultado = Math.sin(eval(funcion));
-      return resultado;
-    case "cos":
-      resultado = Math.cos(eval(funcion));
-      return resultado;
-    case "tg":
-      resultado = Math.tan(eval(funcion));
-      return resultado;
-    case "log":
-      let log_x = eval(funcion);
-      if (log_x <= 0) {
-        resultado = NaN;
-        return resultado;
-      } else {
-        resultado = Math.log(log_x) / Math.log(Math.E);
-        return resultado;
+        if (pantallaX === 0) {
+          ctx.moveTo(pantallaX, pantallaY);
+        } else {
+          ctx.lineTo(pantallaX, pantallaY);
+        }
+      } catch (error) {
+        console.error("Error al evaluar la función en x =", x, ":", error);
       }
-    case "ln":
-      let ln_x = eval(funcion);
-      if (ln_x <= 0) {
-        resultado = NaN;
-        return resultado;
-      } else {
-        resultado = Math.log(ln_x);
-        return resultado;
-      }
-    case "lineal":
-      resultado = eval(funcion);
-      return resultado;
-    case "cuadratica":
-      resultado = eval(funcion);
-      return resultado;
-
-    case "hiperbolica":
-      resultado = Math.sinh(eval(funcion));
-      return resultado;
-    default:
-      // Evaluar la expresión con math.js
-      resultado = eval(funcion, { x: eval(funcion) });
-      return resultado;
-  }
-}
-/**
- * Dibuja la gráfica de la función en el lienzo.
- */
-function dibujarGrafica() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  dibujarEjes();
-  dibujarGrilla();
-
-  const funcionInput = document.getElementById("funcion").value;
-  const tipoInput = document.getElementById("tipo").value;
-
-  // Dibujar la gráfica de la función
-  ctx.beginPath();
-  ctx.strokeStyle = "red";
-  ctx.lineWidth = 2;
-  let xAnterior = -10;
-  let yAnterior = evaluarFuncion(xAnterior, tipoInput, funcionInput);
-  let x = -9.9;
-
-  function animarLinea() {
-    // Evaluar la función con math.js
-    const y = evaluarFuncion(x, tipoInput, funcionInput);
-
-    ctx.moveTo(xAnterior*30 + 400, -yAnterior*30 + 400);
-    ctx.lineTo(x*30 + 400, -y*30 + 400);
-    ctx.stroke();
-
-    xAnterior = x;
-    yAnterior = y;
-    x += 0.05;
-
-    if (x <= 100) {
-      requestAnimationFrame(animarLinea);
     }
+
+    ctx.stroke();
   }
 
-  requestAnimationFrame(animarLinea);
-}
-// Escucha el evento de clic en el botón "Graficar" y llama a la función dibujarGrafica.
-document.getElementById("graficar").addEventListener("click", dibujarGrafica);
+
+  function evaluarFuncion(x, expresion) {
+    // Utilizar la biblioteca math.js para evaluar la función
+    var scope = { x: x, sinh: math.sinh, cosh: math.cosh, tanh: math.tanh, log: math.log, exp: math.exp };
+    return math.evaluate(expresion, scope);
+  }
+
+  btnGraficar.addEventListener("click", function () {
+    var expresion = inputFuncion.value;
+
+    if (expresion.trim() !== "") {
+      var tipoFuncion = detectarTipoFuncion(expresion);
+      console.log("Tipo de función:", tipoFuncion);
+
+      if (tipoFuncion !== "Función no válida") {
+        graficarFuncion(expresion);
+      } else {
+        console.error("La función ingresada no es válida.");
+      }
+    } else {
+      console.error("La función ingresada no es válida.");
+    }
+  });
+
+  });

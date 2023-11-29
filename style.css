@@ -3,19 +3,16 @@
 
 body {
   background-color: #F0F6F9;
-  margin: 0;
-  padding: 0;
 }
 
 #containerId {
   width: auto;
 }
 
-#header-container {
+#header-container{
   text-align: center;
   color: #394648;
   font-family: 'Bebas Neue', sans-serif;
-  padding: 20px;
 }
 
 .container {
@@ -25,8 +22,9 @@ body {
   width: 100%;
   padding: 20px;
   background-color: #F0f6f9;
-  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
   font-family: 'Montserrat', sans-serif;
+
 }
 
 .title {
@@ -34,6 +32,7 @@ body {
   text-align: center;
   color: #394648;
   font-family: 'Bebas Neue', sans-serif;
+
 }
 
 .input-container {
@@ -63,7 +62,7 @@ body {
 
 .funcion-input,
 .funciontype-form {
-  width: 100%;
+  width: calc(100% - 70px);
   margin-bottom: 10px;
 }
 
@@ -77,11 +76,11 @@ body {
   justify-content: center;
 }
 
-.canvas-container {
+
+
+.canva-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100%;
 }
 
 /* Estilos Bootstrap */
@@ -93,6 +92,7 @@ body {
   display: flex;
   align-items: center;
 }
+
 
 .row {
   display: flex;
@@ -108,15 +108,16 @@ body {
 .row > *:last-child {
   margin-right: 0;
 }
-
-canvas {
-  margin-top: 20px;
-  border: 1px solid #ddd;
-  width: 100%;
-  max-width: 800px;
-  max-height: 800px;
+.canvas-container {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
 }
-
+canvas {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ddd;
+}
 .btn {
   width: 100%;
   padding: 0.375rem 0.75rem;
@@ -127,6 +128,7 @@ canvas {
   color: #fff;
 }
 
+
 @media (min-width: 768px) {
   .col > * {
     margin-right: 10px;
@@ -135,24 +137,16 @@ canvas {
   .col:last-child > * {
     margin-right: 0;
   }
-
   .col > *:not(:last-child) {
     margin-right: 10px;
   }
+
 }
 
-#img-container {
+#img-container{
   text-align: center;
 }
 
-#ucc-logo {
+#ucc-logo{
   width: 10%;
-  max-width: 150px;
-  margin: 20px;
-}
-
-@media (max-width: 767px) {
-  .container {
-    margin: 10px;
-  }
 }

@@ -84,7 +84,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function detectarTipoFuncion(expresion) {
     try {
-      // ... (código existente)
+      var parsed = math.parse(expresion);
+
+      if (parsed.isSymbolNode) {
+        return "Función Constante";
+      } else if (parsed.isOperatorNode) {
+        return "Expresión Matemática";
+      } else if (parsed.isFunctionNode) {
+        if (parsed.name === 'exp') {
+          return "Función Exponencial";
+        } else if (['sinh', 'cosh', 'tanh'].includes(parsed.name)) {
+          return "Función Hiperbólica";
+        } else if (['log', 'log10'].includes(parsed.name)) {
+          return "Función Logarítmica";
+        } else {
+          return "Función " + parsed.name;
+        }
+      } else {
+        return "Otro Tipo de Expresión";
+      }
     } catch (error) {
       console.error("Error al analizar la función:", error);
       return "Función no válida: " + error.message;

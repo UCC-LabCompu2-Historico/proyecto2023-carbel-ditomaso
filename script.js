@@ -4,21 +4,36 @@ document.addEventListener("DOMContentLoaded", function () {
   var canvas = document.getElementById("canvas");
   var ctx = canvas.getContext("2d");
 
+  //Definimos variables globales para evitar problemas a la hora de interactuar con ellas. En cada funcion se sobre escriben.
+  var startGridX;
+  var startGridY;
+  var gridSize;
+  var halfGridSize;
+
+  /**
+   * Limpia el canvas y dibuja el eje cartesiano
+   * @method limpiarYDibujarEjeCartesiano
+   */
   function limpiarYDibujarEjeCartesiano() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    dibujarGrillaYEjes();
+    anadirNumerosX();
+  }
 
-    // Ajustar tamaño de la grilla y ejes
-    var gridSize = canvas.width/ 20;  // Ajusta según sea necesario
-    var halfGridSize = gridSize / 2;
+  /**
+   * Dibuja la grilla y los ejes cartesianos en el canvas
+   * @method dibujarGrillaYEjes
+   */
+  function dibujarGrillaYEjes() {
+    gridSize = canvas.width / 20;
+    halfGridSize = gridSize / 2;
     var axisWidth = 2;
 
-    // Calcular el inicio de la grilla y del eje X e Y
-    var startGridX = canvas.width / 2 % gridSize;
-    var startGridY = canvas.height / 2 % gridSize;
+    startGridX = (canvas.width / 2) % gridSize;
+    startGridY = (canvas.height / 2) % gridSize;
 
-    // Dibujar la grilla
     ctx.beginPath();
-    ctx.strokeStyle = "#ddd"; // Color de la grilla
+    ctx.strokeStyle = "#ddd";
 
     // Dibujar líneas horizontales
     for (var i = startGridY; i < canvas.height; i += gridSize) {
@@ -46,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Dibujar ejes cartesianos
     ctx.beginPath();
-    ctx.strokeStyle = "#000"; // Color de los ejes
+    ctx.strokeStyle = "#000";
     ctx.lineWidth = axisWidth;
 
     // Eje X
@@ -58,31 +73,72 @@ document.addEventListener("DOMContentLoaded", function () {
     ctx.lineTo(canvas.width / 2, canvas.height);
 
     ctx.stroke();
-
-// Añadir números al eje X positivo
+  }
+  function anadirNumerosX() {
+    // Añadir números al eje X positivo
     for (var x = startGridX + gridSize; x < canvas.width; x += gridSize) {
-      ctx.fillText(((x - canvas.width / 2) / gridSize).toFixed(1), x, canvas.height / 2 + 10, x + halfGridSize);
+      ctx.fillText(
+          ((x - canvas.width / 2) / gridSize).toFixed(1),
+          x,
+          canvas.height / 2 + 10,
+          x + halfGridSize,
+      );
     }
 
-// Añadir números al eje X negativo
-    for (var x = canvas.width / 2 - gridSize - startGridX; x > 0; x -= gridSize) {
-      ctx.fillText(((x - canvas.width / 2) / gridSize).toFixed(1), x, canvas.height / 2 + 10, x + halfGridSize);
+    // Añadir números al eje X negativo
+    for (
+        var x = canvas.width / 2 - gridSize - startGridX;
+        x > 0;
+        x -= gridSize
+    ) {
+      ctx.fillText(
+          ((x - canvas.width / 2) / gridSize).toFixed(1),
+          x,
+          canvas.height / 2 + 10,
+          x + halfGridSize,
+      );
     }
 
-// Añadir números al eje Y positivo
+    // Añadir números al eje Y positivo
     for (var y = startGridY + gridSize; y < canvas.height; y += gridSize) {
-      ctx.fillText(((canvas.height / 2 - y) / gridSize).toFixed(1), canvas.width / 2, y + 0.5 * halfGridSize);
+      ctx.fillText(
+          ((canvas.height / 2 - y) / gridSize).toFixed(1),
+          canvas.width / 2,
+          y + 0.5 * halfGridSize,
+      );
     }
 
-// Añadir números al eje Y negativo
-    for (var y = canvas.height / 2 - gridSize - startGridY; y > 0; y -= gridSize) {
-      ctx.fillText(((canvas.height / 2 - y) / gridSize).toFixed(1), canvas.width / 2, y + 0.5 * halfGridSize);
+    // Añadir números al eje Y negativo
+    for (
+        var y = canvas.height / 2 - gridSize - startGridY;
+        y > 0;
+        y -= gridSize
+    ) {
+      ctx.fillText(
+          ((canvas.height / 2 - y) / gridSize).toFixed(1),
+          canvas.width / 2,
+          y + 0.5 * halfGridSize,
+      );
     }
-
-
   }
 
+  /**
+   * Detecta el tipo de función ingresada
+   * @method detectarTipoFuncion
+   * @param {string} expresion - La función ingresada por el usuario
+   * @return {string} Tipo de función detectada
+   */
   function detectarTipoFuncion(expresion) {
+    // Validar si la expresión contiene caracteres no permitidos
+    var caracteresNoPermitidos = "abcdefghijklmnopqrstuvwxyzñ¡¿'?&$#!°:´¨¬";
+    var caracteresPermitidos = "piex";
+
+    for (var i = 0; i < caracteresNoPermitidos.length; i++) {
+      if (expresion.includes(caracteresNoPermitidos[i]) && !caracteresPermitidos.includes(caracteresNoPermitidos[i])) {
+        console.error("Función no válida: Caracter no permitido - " + caracteresNoPermitidos[i]);
+        return "Función no válida"; // Corregir la devolución para indicar que es una función no válida
+      }
+    }
     try {
       var parsed = math.parse(expresion);
 
@@ -91,11 +147,11 @@ document.addEventListener("DOMContentLoaded", function () {
       } else if (parsed.isOperatorNode) {
         return "Expresión Matemática";
       } else if (parsed.isFunctionNode) {
-        if (parsed.name === 'exp') {
+        if (parsed.name === "exp") {
           return "Función Exponencial";
-        } else if (['sinh', 'cosh', 'tanh'].includes(parsed.name)) {
+        } else if (["sinh", "cosh", "tanh"].includes(parsed.name)) {
           return "Función Hiperbólica";
-        } else if (['log', 'log10'].includes(parsed.name)) {
+        } else if (["log", "log10"].includes(parsed.name)) {
           return "Función Logarítmica";
         } else {
           return "Función " + parsed.name;
@@ -107,27 +163,31 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error al analizar la función:", error);
       return "Función no válida: " + error.message;
     }
-
   }
+
+  /**
+   * Grafica la función en el canvas
+   * @method graficarFuncion
+   * @param {string} expresion - La función ingresada por el usuario
+   */
   function graficarFuncion(expresion) {
     limpiarYDibujarEjeCartesiano();
 
     var gridSize = 40;
     var halfGridSize = gridSize / 2;
-
-    var rangoX = 10; // Modificar según sea necesario
+    var rangoX = 10;
     var rangoY = 10;
 
     ctx.beginPath();
     ctx.strokeStyle = "#007bff";
 
     for (var pantallaX = 0; pantallaX < canvas.width; pantallaX++) {
-      var x = rangoX * ((pantallaX / canvas.width) - 0.5) * 2;
+      var x = rangoX * (pantallaX / canvas.width - 0.5) * 2;
       try {
         var y = math.evaluate(expresion, { x: x });
 
         if (isNaN(y) || !isFinite(y)) {
-          continue; // Omitir puntos no válidos
+          continue;
         }
 
         var pantallaY = canvas.height / 2 - (y / rangoY) * (canvas.height / 2);
@@ -145,21 +205,34 @@ document.addEventListener("DOMContentLoaded", function () {
     ctx.stroke();
   }
 
-
+  /**
+   * Evalúa la función en un punto dado
+   * @method evaluarFuncion
+   * @param {number} x - Valor en el que evaluar la función
+   * @param {string} expresion - La función a evaluar
+   * @return {number} Resultado de la evaluación
+   */
   function evaluarFuncion(x, expresion) {
-    // Utilizar la biblioteca math.js para evaluar la función
-    var scope = { x: x, sinh: math.sinh, cosh: math.cosh, tanh: math.tanh, log: math.log, exp: math.exp };
+    var scope = {
+      x: x,
+      sinh: math.sinh,
+      cosh: math.cosh,
+      tanh: math.tanh,
+      log: math.log,
+      exp: math.exp,
+    };
     return math.evaluate(expresion, scope);
   }
 
   btnGraficar.addEventListener("click", function () {
-    var expresion = inputFuncion.value;
+    var expresion = inputFuncion.value.trim();
 
-    if (expresion.trim() !== "") {
+    if (expresion !== "") {
       var tipoFuncion = detectarTipoFuncion(expresion);
       console.log("Tipo de función:", tipoFuncion);
 
       if (tipoFuncion !== "Función no válida") {
+        // Se ha detectado un tipo de función válido, ahora se puede graficar
         graficarFuncion(expresion);
       } else {
         console.error("La función ingresada no es válida.");
@@ -168,5 +241,4 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("La función ingresada no es válida.");
     }
   });
-
-  });
+});

@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
   var gridSize;
   var halfGridSize;
 
+  var isAnimating = false; // Variable para rastrear si la animación está en curso
+
+
+
   /**
    * Limpia el canvas y dibuja el eje cartesiano
    * @method limpiarYDibujarEjeCartesiano
@@ -131,78 +135,179 @@ document.addEventListener("DOMContentLoaded", function () {
   function detectarTipoFuncion(expresion) {
     // Validar si la expresión contiene caracteres no permitidos
     var caracteresNoPermitidos = "abcdefghijklmnopqrstuvwxyzñ¡¿'?&$#!°:´¨¬";
-    var caracteresPermitidos = "piex";
+    var caracteresPermitidos = ["pi", "e", "x", "sin", "cos", "tan", "sinh", "cosh", "tanh", "log"];
 
-    for (var i = 0; i < caracteresNoPermitidos.length; i++) {
-      if (expresion.includes(caracteresNoPermitidos[i]) && !caracteresPermitidos.includes(caracteresNoPermitidos[i])) {
-        console.error("Función no válida: Caracter no permitido - " + caracteresNoPermitidos[i]);
-        return "Función no válida"; // Corregir la devolución para indicar que es una función no válida
+    // Verificar si la expresión contiene caracteres no permitidos a nivel de funciones
+    var partes = expresion.split(/[(),]/).filter(function (parte) {
+      return parte.trim() !== "";
+    });
+
+    for (var i = 0; i < partes.length; i++) {
+      var parte = partes[i];
+      if (!caracteresPermitidos.includes(parte) && !/^[-\d\+\*\^\/\(\)\.x]+$/.test(parte)) {
+        console.error("Función no válida: Caracter no permitido - " + parte);
+        return "Función no válida"; // Indicar que es una función no válida
       }
     }
+
     try {
       var parsed = math.parse(expresion);
 
-      if (parsed.isSymbolNode) {
-        return "Función Constante";
+      if (parsed.isSymbolNode || (parsed.isOperatorNode && parsed.op === "*" && parsed.args.length === 2 && parsed.args[1].isSymbolNode && parsed.args[1].name === "x")) {
+        return "Función Lineal";
       } else if (parsed.isOperatorNode) {
         return "Expresión Matemática";
       } else if (parsed.isFunctionNode) {
-        if (parsed.name === "exp") {
-          return "Función Exponencial";
-        } else if (["sinh", "cosh", "tanh"].includes(parsed.name)) {
-          return "Función Hiperbólica";
-        } else if (["log", "log10"].includes(parsed.name)) {
-          return "Función Logarítmica";
+        // Verificar si la función es una de las funciones específicas
+        var functionName = parsed.name;
+        if (caracteresPermitidos.includes(functionName)) {
+          // Verificar si la función está completa
+          if (expresion.endsWith("(")) {
+            console.error("Función no válida: Función incompleta - " + functionName);
+            return "Función no válida";
+          }
+          return "Función " + functionName;
         } else {
-          return "Función " + parsed.name;
+          console.error("Función no válida: Función no permitida - " + functionName);
+          return "Función no válida";
         }
       } else {
         return "Otro Tipo de Expresión";
       }
     } catch (error) {
       console.error("Error al analizar la función:", error);
-      return "Función no válida: " + error.message;
+      return "Función no válida"; // Devolver directamente que es una función no válida
     }
   }
+
 
   /**
    * Grafica la función en el canvas
    * @method graficarFuncion
    * @param {string} expresion - La función ingresada por el usuario
    */
-  function graficarFuncion(expresion) {
+  function graficarFuncion(expresion, callback) {
+    // Limpiar el canvas antes de dibujar el nuevo gráfico
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     limpiarYDibujarEjeCartesiano();
 
     var gridSize = 40;
     var halfGridSize = gridSize / 2;
-    var rangoX = 10;
-    var rangoY = 10;
+    var rangoX = 9; // Ajuste el rango de x según sus necesidades
+    var rangoY = 9; // Ajuste el rango de y según sus necesidades
 
     ctx.beginPath();
     ctx.strokeStyle = "#007bff";
 
-    for (var pantallaX = 0; pantallaX < canvas.width; pantallaX++) {
-      var x = rangoX * (pantallaX / canvas.width - 0.5) * 2;
-      try {
-        var y = math.evaluate(expresion, { x: x });
+    var totalFrames = 60;
+    var currentFrame = 0;
 
-        if (isNaN(y) || !isFinite(y)) {
-          continue;
+    var minX = Infinity;
+    var maxX = -Infinity;
+    var minY = Infinity;
+    var maxY = -Infinity;
+
+    function animate() {
+      // Dibujar una pequeña porción en cada fotograma
+      var segmentWidth = canvas.width / totalFrames;
+
+      for (var i = 0; i < segmentWidth; i++) {
+        var pantallaX = currentFrame * segmentWidth + i;
+        var x = rangoX * (pantallaX / canvas.width - 0.5) * 2;
+
+        try {
+          var y = math.evaluate(expresion, { x: x });
+
+          if (isNaN(y) || !isFinite(y)) {
+            continue;
+          }
+
+          var pantallaY = canvas.height / 2 - (y / rangoY) * (canvas.height / 2);
+
+          // Actualizar las coordenadas extremas
+          minX = Math.min(minX, pantallaX);
+          maxX = Math.max(maxX, pantallaX);
+          minY = Math.min(minY, pantallaY);
+          maxY = Math.max(maxY, pantallaY);
+
+          if (
+              pantallaX >= 0 &&
+              pantallaX <= canvas.width &&
+              pantallaY >= 0 &&
+              pantallaY <= canvas.height
+          ) {
+            if (pantallaX === 0) {
+              ctx.moveTo(pantallaX, pantallaY);
+            } else {
+              ctx.lineTo(pantallaX, pantallaY);
+            }
+          }
+        } catch (error) {
+          console.error("Error al evaluar la función en x =", x, ":", error);
+          // Mostrar error si la expresión no es válida
+          mostrarError("La expresión no es válida.");
+          return;
+        }
+      }
+
+      ctx.stroke();
+
+      currentFrame++;
+
+      if (currentFrame < totalFrames) {
+        // Continuar la animación
+        requestAnimationFrame(animate);
+      } else {
+        // Verificar si las coordenadas extremas están dentro de los límites
+        if (
+            minX < 0 || maxX > canvas.width || minY < 0 || maxY > canvas.height
+        ) {
+          // Coordenadas fuera de los límites, mostrar advertencia o resaltar campo en rojo
+          mostrarAdvertencia("La gráfica se extiende más allá de la zona de dibujo.");
+          // O resaltar el campo en rojo
+          inputFuncion.style.borderColor = "red";
         }
 
-        var pantallaY = canvas.height / 2 - (y / rangoY) * (canvas.height / 2);
-
-        if (pantallaX === 0) {
-          ctx.moveTo(pantallaX, pantallaY);
-        } else {
-          ctx.lineTo(pantallaX, pantallaY);
+        // Verificar si la expresión es válida
+        try {
+          detectarTipoFuncion(expresion);
+        } catch (error) {
+          // Mostrar error si la expresión no es válida
+          mostrarError("La expresión no es válida.");
+          return;
         }
-      } catch (error) {
-        console.error("Error al evaluar la función en x =", x, ":", error);
+
+        // La animación ha terminado, llamar al callback
+        if (typeof callback === "function") {
+          callback();
+        }
       }
     }
 
-    ctx.stroke();
+    // Iniciar la animación
+    animate();
+  }
+
+
+// Función para mostrar advertencias en el DOM
+  function mostrarAdvertencia(mensaje) {
+    // Obtener el contenedor de errores
+    var errorContainer = document.getElementById("error-container");
+
+    // Actualizar el texto del contenedor de errores
+    errorContainer.innerHTML = mensaje;
+
+    // Cambiar el color del mensaje para que sea similar a la función no válida
+    errorContainer.style.color = "red"; // Puedes ajustar el color según tus preferencias
+
+    // Mostrar el contenedor de errores
+    errorContainer.style.display = "block";
+
+    // Ocultar el contenedor después de 5 segundos (puedes ajustar el tiempo)
+    setTimeout(function () {
+      errorContainer.style.display = "none";
+    }, 5000); // 5000 milisegundos = 5 segundos
   }
 
   /**
@@ -225,20 +330,53 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   btnGraficar.addEventListener("click", function () {
+    if (isAnimating) {
+      // Si la animación está en curso, no hacer nada
+      return;
+    }
+
     var expresion = inputFuncion.value.trim();
 
     if (expresion !== "") {
-      var tipoFuncion = detectarTipoFuncion(expresion);
-      console.log("Tipo de función:", tipoFuncion);
+      try {
+        var tipoFuncion = detectarTipoFuncion(expresion);
+        console.log("Tipo de función:", tipoFuncion);
 
-      if (tipoFuncion !== "Función no válida") {
-        // Se ha detectado un tipo de función válido, ahora se puede graficar
-        graficarFuncion(expresion);
-      } else {
-        console.error("La función ingresada no es válida.");
+        if (tipoFuncion !== "Función no válida") {
+          // Se ha detectado un tipo de función válido, ahora se puede graficar
+          isAnimating = true; // Marcar que la animación está en curso
+          graficarFuncion(expresion, function () {
+            // Callback llamado cuando la animación ha terminado
+            isAnimating = false; // Marcar que la animación ha terminado
+          });
+        } else {
+          console.error("La función ingresada no es válida.");
+          mostrarError("La función ingresada no es válida.");
+        }
+      } catch (error) {
+        console.error("Error al detectar el tipo de función:", error.message);
+        mostrarError("Error al detectar el tipo de función.");
       }
     } else {
       console.error("La función ingresada no es válida.");
+      mostrarError("La función ingresada no puede estar vacía.");
     }
   });
+
+// Función para mostrar mensajes de error en el DOM
+  function mostrarError(mensaje) {
+    // Obtener el contenedor de errores
+    var errorContainer = document.getElementById("error-container");
+
+    // Actualizar el texto del contenedor de errores
+    errorContainer.innerHTML = mensaje;
+
+    // Mostrar el contenedor de errores
+    errorContainer.style.display = "block";
+
+    // Ocultar el contenedor después de 5 segundos (puedes ajustar el tiempo)
+    setTimeout(function () {
+      errorContainer.style.display = "none";
+    }, 5000); // 5000 milisegundos = 5 segundos
+  }
 });

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
   <meta charset="UTF-8" />
@@ -24,6 +24,9 @@
 </header>
 <main>
   <div class="container">
+    <!-- Agrega un elemento div para mostrar mensajes de error -->
+    <div id="error-container" class="alert alert-danger" style="display: none;"></div>
+
     <div class="input-container">
       <h2 class="title">Gráfico de Funciones</h2>
       <p class="description">
@@ -48,7 +51,6 @@
       </div>
     </div>
     <div class="canvas-container">
-
       <div class="row">
         <div class="col text-center">
           <canvas class="canvas" id="canvas" width="800" height="800"></canvas>
@@ -60,7 +62,6 @@
 <footer>
   <div class="container" id="img-container"><img id="ucc-logo" src="./images/LOGO_UCC.png" alt="Logo UCC"></div>
 </footer>
-
 
 <script src="https://unpkg.com/mathjs@11.8.0/lib/browser/math.js"></script>
 <script src="script.js"></script>

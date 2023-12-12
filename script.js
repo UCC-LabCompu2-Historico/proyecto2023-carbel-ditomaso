@@ -1,16 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
-    var inputFuncion = document.getElementById("funcion");
-    var btnGraficar = document.getElementById("graficar");
-    var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
+    const inputFuncion = document.getElementById("funcion");
+    const btnGraficar = document.getElementById("graficar");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
 
     //Definimos variables globales para evitar problemas a la hora de interactuar con ellas. En cada funcion se sobre escriben.
-    var startGridX;
-    var startGridY;
-    var gridSize;
-    var halfGridSize;
+    let startGridX;
+    let startGridY;
+    let gridSize;
+    let halfGridSize;
 
-    var isAnimating = false; // Variable para rastrear si la animación está en curso
+    let isAnimating = false; // Variable para rastrear si la animación está en curso
 
     /**
      * Limpia el canvas y dibuja el eje cartesiano

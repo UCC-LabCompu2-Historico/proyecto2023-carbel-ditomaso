@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function dibujarGrillaYEjes() {
         gridSize = canvas.width / 20;
         halfGridSize = gridSize / 2;
-        var axisWidth = 2;
+        let axisWidth = 2;
 
         startGridX = (canvas.width / 2) % gridSize;
         startGridY = (canvas.height / 2) % gridSize;
@@ -38,23 +38,23 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.strokeStyle = "#ddd";
 
         // Dibujar líneas horizontales
-        for (var i = startGridY; i < canvas.height; i += gridSize) {
+        for (let i = startGridY; i < canvas.height; i += gridSize) {
             ctx.moveTo(0, i);
             ctx.lineTo(canvas.width, i);
         }
 
-        for (var i = startGridY - gridSize; i > 0; i -= gridSize) {
+        for (let i = startGridY - gridSize; i > 0; i -= gridSize) {
             ctx.moveTo(0, i);
             ctx.lineTo(canvas.width, i);
         }
 
         // Dibujar líneas verticales
-        for (var j = startGridX; j < canvas.width; j += gridSize) {
+        for (let j = startGridX; j < canvas.width; j += gridSize) {
             ctx.moveTo(j, 0);
             ctx.lineTo(j, canvas.height);
         }
 
-        for (var j = startGridX - gridSize; j > 0; j -= gridSize) {
+        for (let j = startGridX - gridSize; j > 0; j -= gridSize) {
             ctx.moveTo(j, 0);
             ctx.lineTo(j, canvas.height);
         }
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     function anadirNumerosX() {
         // Añadir números al eje X positivo
-        for (var x = startGridX + gridSize; x < canvas.width; x += gridSize) {
+        for (let x = startGridX + gridSize; x < canvas.width; x += gridSize) {
             ctx.fillText(
                 ((x - canvas.width / 2) / gridSize).toFixed(1),
                 x,
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Añadir números al eje X negativo
         for (
-            var x = canvas.width / 2 - gridSize - startGridX;
+            let x = canvas.width / 2 - gridSize - startGridX;
             x > 0;
             x -= gridSize
         ) {
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Añadir números al eje Y positivo
-        for (var y = startGridY + gridSize; y < canvas.height; y += gridSize) {
+        for (let y = startGridY + gridSize; y < canvas.height; y += gridSize) {
             ctx.fillText(
                 ((canvas.height / 2 - y) / gridSize).toFixed(1),
                 canvas.width / 2,
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Añadir números al eje Y negativo
         for (
-            var y = canvas.height / 2 - gridSize - startGridY;
+            let y = canvas.height / 2 - gridSize - startGridY;
             y > 0;
             y -= gridSize
         ) {
@@ -137,8 +137,8 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     function detectarTipoFuncion(expresion) {
         // Validar si la expresión contiene caracteres no permitidos
-        var caracteresNoPermitidos = "abcdefghijklmnopqrstuvwxyzñ¡¿'?&$#!°:´¨¬";
-        var caracteresPermitidos = [
+        let caracteresNoPermitidos = "abcdefghijklmnopqrstuvwxyzñ¡¿'?&$#!°:´¨¬";
+        let caracteresPermitidos = [
             "pi",
             "e",
             "x",
@@ -152,12 +152,12 @@ document.addEventListener("DOMContentLoaded", function () {
         ];
 
         // Verificar si la expresión contiene caracteres no permitidos a nivel de funciones
-        var partes = expresion.split(/[(),]/).filter(function (parte) {
+        let partes = expresion.split(/[(),]/).filter(function (parte) {
             return parte.trim() !== "";
         });
 
-        for (var i = 0; i < partes.length; i++) {
-            var parte = partes[i];
+        for (let i = 0; i < partes.length; i++) {
+            let parte = partes[i];
             if (
                 !caracteresPermitidos.includes(parte) &&
                 !/^[-\d\+\*\^\/\(\)\.x]+$/.test(parte)
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-            var parsed = math.parse(expresion);
+            let parsed = math.parse(expresion);
 
             if (
                 parsed.isSymbolNode ||
@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return "Expresión Matemática";
             } else if (parsed.isFunctionNode) {
                 // Verificar si la función es una de las funciones específicas
-                var functionName = parsed.name;
+                let functionName = parsed.name;
                 if (caracteresPermitidos.includes(functionName)) {
                     // Verificar si la función está completa
                     if (expresion.endsWith("(")) {
@@ -221,38 +221,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
         limpiarYDibujarEjeCartesiano();
 
-        var gridSize = 40;
-        var halfGridSize = gridSize / 2;
-        var rangoX = 10; // Ajuste el rango de x según sus necesidades
-        var rangoY = 10; // Ajuste el rango de y según sus necesidades
+        let gridSize = 40;
+        let halfGridSize = gridSize / 2;
+        let rangoX = 10; // Ajuste el rango de x según sus necesidades
+        let rangoY = 10; // Ajuste el rango de y según sus necesidades
 
         ctx.beginPath();
         ctx.strokeStyle = "#007bff";
 
-        var totalFrames = 60;
-        var currentFrame = 0;
+        let totalFrames = 60;
+        let currentFrame = 0;
 
-        var minX = Infinity;
-        var maxX = -Infinity;
-        var minY = Infinity;
-        var maxY = -Infinity;
+        let minX = Infinity;
+        let maxX = -Infinity;
+        let minY = Infinity;
+        let maxY = -Infinity;
 
         function animate() {
             // Dibujar una pequeña porción en cada fotograma
-            var segmentWidth = canvas.width / totalFrames;
+            let segmentWidth = canvas.width / totalFrames;
 
-            for (var i = 0; i < segmentWidth; i++) {
-                var pantallaX = currentFrame * segmentWidth + i;
-                var x = rangoX * (pantallaX / canvas.width - 0.5) * 2;
+            for (let i = 0; i < segmentWidth; i++) {
+                let pantallaX = currentFrame * segmentWidth + i;
+                let x = rangoX * (pantallaX / canvas.width - 0.5) * 2;
 
                 try {
-                    var y = math.evaluate(expresion, { x: x });
+                    let y = math.evaluate(expresion, { x: x });
 
                     if (isNaN(y) || !isFinite(y)) {
                         continue;
                     }
 
-                    var pantallaY =
+                    let pantallaY =
                         canvas.height / 2 - (y / rangoY) * (canvas.height / 2);
 
                     // Actualizar las coordenadas extremas
@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     function mostrarMensaje(mensaje, color = "black") {
         // Obtener el contenedor de mensajes
-        var mensajeContainer = document.getElementById("error-container");
+        let mensajeContainer = document.getElementById("error-container");
 
         // Actualizar el texto y color del contenedor de mensajes
         mensajeContainer.innerHTML = mensaje;
@@ -353,11 +353,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        var expresion = inputFuncion.value.trim();
+        let expresion = inputFuncion.value.trim();
 
         if (expresion !== "") {
             try {
-                var tipoFuncion = detectarTipoFuncion(expresion);
+                let tipoFuncion = detectarTipoFuncion(expresion);
                 console.log("Tipo de función:", tipoFuncion);
 
                 if (tipoFuncion !== "Función no válida") {
@@ -389,7 +389,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function mostrarError(mensaje) {
         // Obtener el contenedor de errores
-        var errorContainer = document.getElementById("error-container");
+        let errorContainer = document.getElementById("error-container");
 
         // Actualizar el texto del contenedor de errores
         errorContainer.innerHTML = mensaje;

@@ -8,7 +8,8 @@ Ditomaso Agustin, Carbel Matias
 
 Graficador de Funciones
 
-### **Link de GH-Pages:**
+### **Link de GH-Pages:** 
+[Link a Github Pages](https://ucc-labcompu2.github.io/proyecto2023-carbel-ditomaso/)
 
 ## **Tecnologias utilizadas:**
 

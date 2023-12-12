@@ -217,8 +217,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var gridSize = 40;
         var halfGridSize = gridSize / 2;
-        var rangoX = 9; // Ajuste el rango de x según sus necesidades
-        var rangoY = 9; // Ajuste el rango de y según sus necesidades
+        var rangoX = 10; // Ajuste el rango de x según sus necesidades
+        var rangoY = 10; // Ajuste el rango de y según sus necesidades
 
         ctx.beginPath();
         ctx.strokeStyle = "#007bff";

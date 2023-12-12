@@ -76,6 +76,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         ctx.stroke();
     }
+
+    /**
+     * Añade números al eje X y Y en el canvas
+     * @method anadirNumerosX
+     */
     function anadirNumerosX() {
         // Añadir números al eje X positivo
         for (var x = startGridX + gridSize; x < canvas.width; x += gridSize) {
@@ -208,6 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
      * Grafica la función en el canvas
      * @method graficarFuncion
      * @param {string} expresion - La función ingresada por el usuario
+     * @param {function} callback - Función de retorno opcional al finalizar la animación
      */
     function graficarFuncion(expresion, callback) {
         // Limpiar el canvas antes de dibujar el nuevo gráfico
@@ -318,10 +324,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /**
-     * Función para mostrar mensajes en el DOM
+     * Muestra mensajes en el DOM
      * @method mostrarMensaje
      * @param {string} mensaje - Mensaje a mostrar
-     * @param {string} color - Color del mensaje (opcional)
+     * @param {string} [color=black] - Color del mensaje (opcional)
      */
     function mostrarMensaje(mensaje, color = "black") {
         // Obtener el contenedor de mensajes
@@ -375,7 +381,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Función para mostrar mensajes de error en el DOM
+    /**
+     * Muestra mensajes de error en el DOM
+     * @method mostrarError
+     * @param {string} mensaje - Mensaje de error a mostrar
+     */
+
     function mostrarError(mensaje) {
         // Obtener el contenedor de errores
         var errorContainer = document.getElementById("error-container");

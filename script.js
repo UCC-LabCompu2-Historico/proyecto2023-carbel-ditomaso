@@ -149,6 +149,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "cosh",
             "tanh",
             "log",
+            "exp"
+
         ];
 
         // Verificar si la expresión contiene caracteres no permitidos a nivel de funciones
@@ -186,13 +188,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 let functionName = parsed.name;
                 if (caracteresPermitidos.includes(functionName)) {
                     // Verificar si la función está completa
-                    if (expresion.endsWith("(")) {
+                    if (expresion.endsWith("(") && functionName !== "exp") {
                         console.error(
                             "Función no válida: Función incompleta - " + functionName,
                         );
                         return "Función no válida";
                     }
                     return "Función " + functionName;
+                } else if (functionName === "exp") {
+                    // Permitir la función exponencial 'exp(x)'
+                    return "Función exponencial";
                 } else {
                     console.error(
                         "Función no válida: Función no permitida - " + functionName,

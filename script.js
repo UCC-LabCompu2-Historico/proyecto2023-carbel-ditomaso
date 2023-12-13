@@ -260,7 +260,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     maxX = Math.max(maxX, pantallaX);
                     minY = Math.min(minY, pantallaY);
                     maxY = Math.max(maxY, pantallaY);
-
                     if (
                         pantallaX >= 0 &&
                         pantallaX <= canvas.width &&

@@ -242,6 +242,26 @@ document.addEventListener("DOMContentLoaded", function () {
         let minY = Infinity;
         let maxY = -Infinity;
 
+
+        /**
+         * Dibuja la animación de la función en el canvas por segmentos en cada fotograma.
+         *
+         * @method animate
+         * @param {number} totalFrames - El número total de fotogramas para la animación.
+         * @param {number} currentFrame - El fotograma actual en la animación.
+         * @param {number} rangoX - El rango en el eje X para la función.
+         * @param {number} rangoY - El rango en el eje Y para la función.
+         * @param {number} minX - Coordenada X mínima de la función.
+         * @param {number} maxX - Coordenada X máxima de la función.
+         * @param {number} minY - Coordenada Y mínima de la función.
+         * @param {number} maxY - Coordenada Y máxima de la función.
+         * @param {string} expresion - La función matemática a graficar.
+         * @param {CanvasRenderingContext2D} ctx - Contexto del canvas para dibujar.
+         * @param {HTMLCanvasElement} canvas - Elemento canvas para la animación.
+         * @param {function} mostrarMensaje - Función para mostrar mensajes en el DOM.
+         */
+
+        
         function animate() {
             // Dibujar una pequeña porción en cada fotograma
             let segmentWidth = canvas.width / totalFrames;
